@@ -1,0 +1,21 @@
+{
+  "name": "QualiflowAI",
+  "short_name": "QualiflowAI",
+  "description": "The AI-powered customer journey platform that turns leads into revenue automatically.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#6B2D9E",
+  "theme_color": "#6B2D9E",
+  "icons": [
+    {
+      "src": "/assets/qualiflow-logo_no_text.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/qualiflow-logo_no_text.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

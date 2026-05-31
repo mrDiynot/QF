@@ -1,31 +1,356 @@
-# Dependencies
-node_modules/
-.npm
-package-lock.json
-yarn.lock
+# QualiFlow - Git Ignore File
 
-# Build
+## User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
+
+## Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+## Visual Studio cache/options directory
+.vs/
+
+## Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+## Rider
+.idea/
+*.sln.iml
+
+## Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+## Visual Studio Trace Files
+*.e2e
+
+## TFS 2012 Local Workspace
+$tf/
+
+## ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+## TeamCity
+_TeamCity*
+
+## DotCover
+*.dotCover
+
+## AxoCover
+.axoCover/*
+!.axoCover/settings.json
+
+## Coverlet
+coverage*.json
+coverage*.xml
+coverage*.info
+
+## Visual Studio code coverage
+*.coverage
+*.coveragexml
+
+## NCrunch
+_NCrunch_*
+.*crunch*.local.xml
+nCrunchTemp_*
+
+## BenchmarkDotNet
+BenchmarkDotNet.Artifacts
+
+## Ionide
+.ionide/
+
+## .NET
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## NuGet
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+
+## ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+## StyleCop
+StyleCopReport.xml
+
+## Files built by Visual Studio
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.log
+*.tlog
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+## Entity Framework
+*.edmx.diagram
+*.edmx.sql
+
+## Database
+*.mdf
+*.ldf
+*.ndf
+
+## Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+## Next.js
 .next/
 out/
-dist/
-build/
+.swc/
 
-# Environment
+## Production
+/build
+/dist
+
+## Misc
+.DS_Store
+*.pem
+.env
+.env*.local
+
+## Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+## Vercel
+.vercel
+
+## TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+## Testing
+coverage/
+*.lcov
+test-results/
+playwright-report/
+.nyc_output/
+
+## IDEs
+*.sw?
+*.swo
+*.swn
+*.swm
+.idea
+.vscode-test
+
+## OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+.AppleDouble
+.LSOverride
+
+## Temporary files
+*.tmp
+*.temp
+*.bak
+*.orig
+*~
+
+## Secrets & Credentials
+secrets.json
+appsettings.Development.json
+appsettings.*.json
+!appsettings.json
+*.key
+*.pem
+*.p12
+*.pfx
 .env
 .env.local
 .env.*.local
+.env.augment
+doppler.yaml
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
+## Azure
+local.settings.json
+.azure/
 
-# Logs
+## Docker
+docker-compose.override.yml
+
+## Logs
+logs/
 *.log
-npm-debug.log*
-yarn-debug.log*
 
-# OS
-.DS_Store
+## Build artifacts
+publish/
+*.publish.xml
+
+## User secrets
+secrets/
+
+## JetBrains Rider
+.idea/
+*.sln.DotSettings.user
+
+## macOS
+.AppleDouble
+.LSOverride
+# macOS custom folder icon file (Icon followed by carriage return)
+Icon[\r]
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+## Windows
 Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+## Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+## AI-Specific Folders & Files (Never commit to repository)
+# AugmentCode AI
+.augment/
+.augment-guidelines
+.env.augment.example
+
+# Claude AI
+.claude/
+.claude-code/
+claude.json
+.anthropic/
+
+# Cursor IDE
+.cursor/
+.cursorrules
+cursor.json
+
+# Continue.dev
+.continue/
+
+# GitHub Copilot
+.copilot/
+
+# Aider
+.aider/
+.aider.conf.yml
+
+# Windsurf IDE
+.windsurf/
+
+# Supermaven
+.supermaven/
+
+# Codeium
+.codeium/
+
+# Tabnine
+.tabnine/
+
+# OpenAI
+.openai/
+
+# Generic AI folders
+.ai/
+.llm/
+
+# AI-generated temp files
+*.ai-temp
+*.llm-temp
+
+## Utility Scripts (Local development only)
+scripts/
+
+## Documentation Strategy
+# Exclude planning docs (business/PM docs - not needed in repo)
+docs/
+
+# Exclude development docs until production readiness (final sprint)
+# Will be included in production deployment only
+src/docs/
+
+# Exclude all markdown files
+*.md
+
+# Exception: Allow critical root documentation
+!README.md
+!SECRETS_MANAGEMENT.md

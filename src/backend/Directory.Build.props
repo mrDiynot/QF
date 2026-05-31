@@ -1,0 +1,134 @@
+<Project>
+  <!--
+    QualiFlow - MSBuild Configuration
+
+    This file contains shared MSBuild properties for all projects in the solution.
+    It enforces code quality, security, and performance standards.
+
+    Central Package Management: All package versions are defined in Directory.Packages.props
+  -->
+
+  <PropertyGroup>
+    <!-- Language & Framework -->
+    <LangVersion>14</LangVersion>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <!-- Fix for .NET SDK 10.0.102 MSB3552 bug (dotnet/msbuild#12546) -->
+    <!-- The **/*.resx glob fails when no .resx files exist; we don't use .resx files -->
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+
+    <!-- Output Configuration -->
+    <OutputType>Library</OutputType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn> <!-- Suppress missing XML comment warnings -->
+
+    <!-- Code Quality -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <WarningLevel>9999</WarningLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest-all</AnalysisLevel>
+    <AnalysisMode>All</AnalysisMode>
+
+    <!-- Suppress analyzer version mismatch warning -->
+    <_SkipUpgradeNetAnalyzersNuGetWarning>true</_SkipUpgradeNetAnalyzersNuGetWarning>
+
+    <!-- Security -->
+    <Deterministic>true</Deterministic>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+
+    <!-- Performance -->
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+    <RetainVMGarbageCollection>true</RetainVMGarbageCollection>
+
+    <!-- Assembly Information -->
+    <Company>QualiFlow</Company>
+    <Product>QualiFlow</Product>
+    <Copyright>Copyright © 2025 QualiFlow</Copyright>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <InformationalVersion>1.0.0</InformationalVersion>
+  </PropertyGroup>
+
+  <!-- StyleCop Analyzers (version managed in Directory.Packages.props) -->
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- Code Analysis Rules -->
+  <ItemGroup>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)stylecop.json" Link="stylecop.json" />
+  </ItemGroup>
+
+  <!-- Security Analyzers (versions managed in Directory.Packages.props) -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="SonarAnalyzer.CSharp">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="SecurityCodeScan.VS2019">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+
+    <!-- Additional Build Analyzers -->
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="AsyncFixer">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Meziantou.Analyzer">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- Code Coverage (version managed in Directory.Packages.props) -->
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- Compiler Warnings as Errors -->
+  <PropertyGroup>
+    <!-- Nullability warnings -->
+    <WarningsAsErrors>$(WarningsAsErrors);CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625</WarningsAsErrors>
+
+    <!-- Async/await warnings -->
+    <WarningsAsErrors>$(WarningsAsErrors);CS4014;CS1998</WarningsAsErrors>
+
+    <!-- Obsolete API warnings -->
+    <WarningsAsErrors>$(WarningsAsErrors);CS0618;CS0612</WarningsAsErrors>
+
+    <!-- Security warnings -->
+    <WarningsAsErrors>$(WarningsAsErrors);CA2007;CA2009;CA5359;CA5360;CA5361;CA5362;CA5363;CA5364;CA5365;CA5366;CA5367;CA5368;CA5369;CA5370;CA5371;CA5372;CA5373;CA5374;CA5375;CA5376;CA5377;CA5378;CA5379;CA5380;CA5381;CA5382;CA5383;CA5384;CA5385;CA5386;CA5387;CA5388;CA5389;CA5390;CA5391;CA5392;CA5393;CA5394;CA5395;CA5396;CA5397;CA5398;CA5399;CA5400;CA5401;CA5402;CA5403;CA5404;CA5405</WarningsAsErrors>
+  </PropertyGroup>
+
+  <!-- StyleCop Rule Customizations -->
+  <PropertyGroup>
+    <!-- Disable documentation requirements for test projects -->
+    <GenerateDocumentationFile Condition="$(MSBuildProjectName.Contains('Tests'))">false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!-- Note: .globalconfig is auto-discovered by MSBuild, no need to include it explicitly -->
+
+</Project>

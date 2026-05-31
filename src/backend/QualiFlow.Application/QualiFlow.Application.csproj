@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- MediatR for CQRS -->
+    <PackageReference Include="MediatR" />
+
+    <!-- FluentValidation -->
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+
+    <!-- AutoMapper -->
+    <PackageReference Include="AutoMapper" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
+
+    <!-- Elasticsearch NEST Client (S15-BE-001) -->
+    <PackageReference Include="NEST" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\QualiFlow.Domain\QualiFlow.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

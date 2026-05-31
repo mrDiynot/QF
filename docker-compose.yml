@@ -1,0 +1,85 @@
+# QualiFlow Development Environment
+# Based on Technical Design Document v3.0
+#
+# Service included:
+# - PostgreSQL 17 with pgvector (Primary database)
+#
+# NOT included (documented reasons):
+# - Redis: Not needed for MVP (using .NET MemoryCache + Hangfire PostgreSQL storage)
+# - Seq: Not documented (using Sentry cloud service for logging)
+# - pgAdmin: Not documented (developers can use psql, Azure Data Studio, or DBeaver)
+# - Mailpit: Not documented (no local email testing in approved stack)
+# - Redis Commander: Not needed (no Redis)
+#
+# Applications run directly (NOT in Docker):
+# - .NET API (run with: dotnet watch run)
+# - Next.js Frontend (run with: npm run dev)
+# - Hangfire (runs inside .NET API process)
+# - SignalR (runs inside .NET API process)
+
+services:
+  # =============================================================================
+  # POSTGRESQL 17 + pgvector - Primary Database
+  # =============================================================================
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: qualiflow-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: dev_password
+      POSTGRES_DB: qualiflow_dev
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=en_US.UTF-8"
+      # Performance tuning for development
+      POSTGRES_MAX_CONNECTIONS: 200
+      POSTGRES_SHARED_BUFFERS: 256MB
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d qualiflow_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - qualiflow-network
+    restart: unless-stopped
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_preload_libraries=vector"
+      - "-c"
+      - "max_connections=200"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "effective_cache_size=512MB"
+      - "-c"
+      - "work_mem=16MB"
+      - "-c"
+      - "maintenance_work_mem=64MB"
+      - "-c"
+      - "log_statement=all"  # Log all queries for development
+      - "-c"
+      - "log_duration=on"     # Log query duration
+
+# =============================================================================
+# VOLUMES
+# =============================================================================
+volumes:
+  postgres_data:
+    driver: local
+    name: qualiflow-postgres-data
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+networks:
+  qualiflow-network:
+    driver: bridge
+    name: qualiflow-network
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

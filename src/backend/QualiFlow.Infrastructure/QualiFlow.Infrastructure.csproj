@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Entity Framework Core -->
+    <PackageReference Include="BCrypt.Net-Next" />
+    <PackageReference Include="Azure.Storage.Blobs" />
+    <PackageReference Include="ClosedXML" />
+    <PackageReference Include="CsvHelper" />
+    <PackageReference Include="Hangfire.AspNetCore" />
+    <PackageReference Include="Hangfire.PostgreSql" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" />
+    <PackageReference Include="NEST" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="OpenAI" />
+    <PackageReference Include="Otp.NET" />
+    <PackageReference Include="Pgvector" />
+    <PackageReference Include="Pgvector.EntityFrameworkCore" />
+    <PackageReference Include="EFCore.NamingConventions" />
+
+    <!-- ASP.NET Core Identity -->
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="QRCoder" />
+    <PackageReference Include="Resend" />
+    <PackageReference Include="StackExchange.Redis" />
+    <PackageReference Include="Stripe.net" />
+
+    <!-- JWT Authentication -->
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+
+    <!-- SignalR for real-time messaging -->
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" />
+    <PackageReference Include="Twilio" />
+    <PackageReference Include="WorkflowCore" />
+    <PackageReference Include="WorkflowCore.Persistence.PostgreSQL" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\QualiFlow.Domain\QualiFlow.Domain.csproj" />
+    <ProjectReference Include="..\QualiFlow.Application\QualiFlow.Application.csproj" />
+  </ItemGroup>
+
+</Project>

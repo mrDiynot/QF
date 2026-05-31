@@ -1,0 +1,49 @@
+# Set default line ending behavior to auto-normalize
+* text=auto
+
+# Declare files that will always have LF line endings on checkout
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Declare files that will always have CRLF line endings on checkout
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Source code
+*.cs text diff=csharp
+*.cshtml text
+*.csx text
+*.js text
+*.ts text
+*.tsx text
+*.jsx text
+*.json text
+*.xml text
+*.config text
+*.md text
+*.yaml text
+*.yml text
+
+# Documentation
+*.markdown text
+*.mdx text
+
+# Binary files
+*.dll binary
+*.exe binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.7z binary
+*.tar binary
+*.gz binary
+
+# Exclude files from exporting
+.gitattributes export-ignore
+.gitignore export-ignore
+.editorconfig export-ignore

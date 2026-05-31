@@ -1,195 +1,214 @@
-# QualiFlow AI Frontend
+# QualiFlow - AI-Powered Omnichannel Lead Qualification Platform
 
-Enterprise-grade AI-powered platform for omnichannel lead capture, qualification, and engagement.
+[![CI Status](https://github.com/QualiFlow-ai/qualiflow.saas/workflows/Backend%20CI/badge.svg)](https://github.com/QualiFlow-ai/qualiflow.saas/actions)
+[![Frontend CI](https://github.com/QualiFlow-ai/qualiflow.saas/workflows/Frontend%20CI/badge.svg)](https://github.com/QualiFlow-ai/qualiflow.saas/actions)
+[![License](https://img.shields.io/badge/license-Proprietary-blue.svg)](LICENSE)
 
-## Tech Stack
+> **Enterprise-grade AI-powered platform for omnichannel lead capture, qualification, and engagement**
 
-- **Framework**: Next.js 15 (App Router)
-- **Language**: TypeScript (Strict Mode)
-- **Styling**: Tailwind CSS v4
-- **UI Components**: shadcn/ui
-- **Authentication**: NextAuth.js v5 (JWT)
-- **State Management**: Zustand
-- **Data Fetching**: TanStack Query (React Query)
-- **Forms**: React Hook Form + Zod
-- **HTTP Client**: Axios
-- **Real-time**: SignalR (@microsoft/signalr)
-- **Icons**: Lucide React
-- **Notifications**: Sonner
+QualiFlow enables businesses to capture leads from multiple channels (chat, SMS, voice, Instagram, Facebook, WhatsApp), automatically qualify them using GPT-4, and seamlessly integrate with CRM systems—all while maintaining conversation context across channels.
 
-## Getting Started
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
+- **.NET 10 SDK** ([Download](https://dotnet.microsoft.com/download/dotnet/10.0))
+- **Node.js 20 LTS** ([Download](https://nodejs.org/))
+- **Docker Desktop** ([Download](https://www.docker.com/products/docker-desktop))
+- **Git 2.40+** ([Download](https://git-scm.com/downloads))
 
-- Node.js 20+ LTS
-- npm or pnpm
-- .NET 10 backend running on `https://localhost:5001`
+### Local Development Setup
 
-### Installation
+\`\`\`bash
+# 1. Clone repository
+git clone https://github.com/QualiFlow-ai/qualiflow.saas.git
+cd qualiflow.saas
+
+# 2. Start PostgreSQL
+docker-compose up -d postgres
+
+# 3. Verify PostgreSQL is running
+docker ps
+# Expected: postgres container running on port 5432
+\`\`\`
+
+**Database Access:**
+- 🗄️ **PostgreSQL:** localhost:5432
+- 👤 **User:** See `docker-compose.yml` or Doppler for credentials
+- 🔑 **Password:** Configure via environment variables (see Secrets Management below)
+- 📊 **Database:** `qualiflow`
+- 🔌 **Extensions:** pgvector 0.8.1
+
+### Secrets Management
+
+**Development:** Use [Doppler](https://www.doppler.com/) for local development secrets:
+```bash
+doppler run -- dotnet run
+```
+
+**Production:** Secrets are stored in Azure Key Vault and automatically injected via managed identity.
+
+---
+
+## 🏗️ Architecture
+
+**Architecture Pattern:** Modular Monolith with Clean Architecture + Vertical Slice Architecture (VSA)
+
+**Technology Stack (Implemented):**
+- **Backend:** .NET 10, C# 14, ASP.NET Core Web API, Entity Framework Core 10
+- **Database:** PostgreSQL 17 with pgvector 0.8.1 extension
+- **AI Integration:** OpenAI GPT-4 SDK v2.1.0 for lead qualification
+- **Authentication:** JWT tokens with refresh token rotation
+- **Validation:** FluentValidation for all DTOs
+- **Mapping:** AutoMapper for entity-DTO transformations
+- **Logging:** Serilog with structured logging + LoggerMessage source generators
+- **Documentation:** Swagger/OpenAPI with comprehensive XML comments
+- **Code Quality:** StyleCop, SonarAnalyzer, SecurityCodeScan
+- **Infrastructure:** Docker, GitHub Actions CI/CD
+
+### Project Structure
+
+```
+src/backend/
+├── QualiFlow.API/              # Web API, Controllers, Hubs
+├── QualiFlow.Application/      # Business Logic, Services, DTOs
+├── QualiFlow.Domain/           # Entities, Enums, Interfaces
+├── QualiFlow.Infrastructure/   # Data Access, External Services
+└── tests/                      # Unit & Integration Tests
+```
+
+### Implemented Features
+
+**Core Platform:**
+- ✅ JWT authentication with access/refresh tokens (15 min / 7 days)
+- ✅ Multi-tenancy with PostgreSQL RLS and businessId filtering
+- ✅ Lead management with status transition validation
+- ✅ Conversation management across multiple channels
+- ✅ Message management with threading and read tracking
+- ✅ Real-time communication via SignalR Hub
+- ✅ Comprehensive business rule validation
+- ✅ Soft delete support for all entities
+
+**AI & Qualification:**
+- ✅ OpenAI GPT-4 integration for AI-powered lead qualification
+- ✅ BANT scoring with configurable weights
+- ✅ Intent detection and sentiment analysis
+
+**Onboarding & Channels (Sprint 5 - ✅ COMPLETE):**
+- ✅ 4-step onboarding wizard (business profile, channels, AI config, completion)
+- ✅ Multi-channel architecture (SMS, Voice, WhatsApp, Instagram, Facebook, ChatWidget)
+- ✅ Twilio integration for SMS/Voice/WhatsApp (stub implementation with real SDK integration ready)
+- ✅ Channel CRUD operations with verification endpoints
+- ✅ Multi-tenancy with global query filters on 13 entities
+- ✅ 103 total tests passing (58 unit + 45 integration)
+- 🔄 Meta Graph API (Instagram/Facebook) - Deferred to Sprint 7+ (S5-BE-017)
+
+### AI Capabilities
+
+| Feature | Description |
+|---------|-------------|
+| Lead Qualification | AI-powered scoring with configurable criteria |
+| Intent Detection | Identify customer intent from messages |
+| Sentiment Analysis | Analyze message sentiment and emotions |
+| Retry Logic | 3 attempts with exponential backoff |
+
+### API Endpoints
+
+| Resource | Endpoints | Description |
+|----------|-----------|-------------|
+| `/api/v1/auth` | 9 | JWT + OAuth (Google, Microsoft, Facebook, Instagram) |
+| `/api/v1/leads` | 6 | CRUD + Status transitions + AI Qualification |
+| `/api/v1/conversations` | 7 | CRUD + Unread count + Archive |
+| `/api/v1/messages` | 7 | CRUD + Mark as read + Search |
+| `/api/v1/onboarding` | 6 | 4-step wizard + status/defaults |
+| `/api/v1/channels` | 8 | CRUD + verify/active/by-type |
+| `/api/v1/forms` | 10 | Dynamic forms + submissions |
+| `/api/v1/business` | 3 | Business settings management |
+| `/api/v1/users` | 3 | User profile management |
+| `/api/v1/notes` | 5 | Conversation notes |
+| `/api/v1/quick-replies` | 6 | Message templates |
+| `/api/v1/files` | 3 | File uploads and management |
+| `/api/v1/scoring` | 6 | BANT scoring criteria |
+| `/api/v1/workflows` | 13 | Workflow execution + definitions |
+| `/api/v1/surveys` | 8 | Survey CRUD + analytics |
+| `/api/v1/tracking` | 2 | Email open/click tracking |
+| `/api/v1/bulk-operations` | 5 | Bulk lead/contact operations |
+
+**Total:** 250+ RESTful API endpoints with comprehensive OpenAPI documentation
+
+**Test Coverage:** 103 tests passing (58 unit + 45 integration) with ≥80% code coverage
+
+### CRM Capabilities
+
+**Built-in CRM (Sprint 6 - MVP Default):**
+- ✅ Contact management (CRUD)
+- ✅ Deal pipeline (6 stages: New → Qualified → Proposal → Negotiation → Won/Lost)
+- ✅ Activity tracking and notes
+- ✅ Pipeline value calculations
+- ✅ Win/loss analytics
+
+**Architecture:** Extensible adapter pattern supports ANY CRM integration
+
+### External Integrations
+
+| Integration | Technology | Status | Purpose | Sprint |
+|-------------|------------|--------|---------|--------|
+| **CRM** ||||
+| QualiFlow CRM | Built-in PostgreSQL | ✅ Default | Contact + Deal management | S6 |
+| HubSpot | CRM API + OAuth | 📋 Planned | Optional external CRM | S7-8 |
+| Salesforce | CRM API + OAuth | 📋 Planned | Optional external CRM | S7-8 |
+| **AI & Communication** ||||
+| OpenAI | GPT-4 | ✅ Complete | AI lead qualification & scoring | S3 |
+| Twilio | SDK 7.6.0 | ✅ Stub Ready | SMS/Voice/WhatsApp provisioning | S5 |
+| Meta Graph API | Instagram/Facebook | 🔄 Deferred | Social channel support | S7+ |
+| Cal.com | Scheduling API | 📋 Planned | Appointment booking | S6 |
+| **Automation** ||||
+| Workflow Core | 3.x | ✅ Complete | Workflow automation engine | S9, S36 |
+| React Flow | 11.x | ✅ Complete | Visual workflow designer | S10-12 |
+| **Email & Surveys** ||||
+| Email Tracking | Custom | ✅ Complete | Open/click tracking pixels | S36 |
+| Survey Analytics | Custom | ✅ Complete | NPS scores, response timeline | S36 |
+
+**Notes:**
+- **Built-in CRM is DEFAULT** - All businesses get CRM functionality without external dependencies
+- **External CRMs are OPTIONAL** - Businesses can upgrade to HubSpot/Salesforce during onboarding
+- **Adapter Pattern** - Supports ANY CRM integration (Pipedrive, Zoho, custom webhooks)
+- Twilio integration implemented as stub service (S5-BE-016) - ready for production credentials
+- Meta Graph API (S5-BE-017) deferred to Sprint 7+ to prioritize built-in CRM in Sprint 6
+
+---
+
+## 💻 Development Workflow
+
+### Git Workflow
 
 ```bash
-# Install dependencies
-npm install
+# Create feature branch
+git checkout -b feature/your-feature-name
 
-# Copy environment variables
-cp .env.example .env.local
+# Make changes and commit
+git add .
+git commit -m "feat: your feature description"
 
-# Update .env.local with your configuration
+# Push and create pull request
+git push origin feature/your-feature-name
 ```
 
-### Environment Variables
+### CI/CD Pipelines
 
-Create a `.env.local` file with the following variables:
+- **Backend CI**: .NET build, test, code quality checks
+- **Frontend CI**: TypeScript type checking, linting
+- **Secrets Sync**: Azure Key Vault to GitHub Secrets
 
-```env
-# API Configuration
-NEXT_PUBLIC_API_URL=https://localhost:5001
-NEXT_PUBLIC_API_VERSION=v1
+---
 
-# NextAuth Configuration
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your-secret-key-here
-
-# OAuth Providers (Optional)
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-
-MICROSOFT_CLIENT_ID=your-microsoft-client-id
-MICROSOFT_CLIENT_SECRET=your-microsoft-client-secret
-
-# SignalR Hub
-NEXT_PUBLIC_SIGNALR_HUB_URL=https://localhost:5001/hubs/conversation
-
-# Feature Flags
-NEXT_PUBLIC_ENABLE_OAUTH=true
-NEXT_PUBLIC_ENABLE_ANALYTICS=false
-```
-
-### Development
-
-```bash
-# Run development server with Turbopack
-npm run dev
-
-# Open http://localhost:3000
-```
-
-### Build
-
-```bash
-# Build for production
-npm run build
-
-# Start production server
-npm start
-```
-
-## Project Structure
-
-```
-src/frontend/
-├── app/                      # Next.js App Router
-│   ├── (auth)/              # Authentication routes
-│   │   ├── login/           # Login page
-│   │   ├── register/        # Registration page
-│   │   └── forgot-password/ # Password reset
-│   ├── api/                 # API routes
-│   │   └── auth/            # NextAuth.js endpoints
-│   ├── layout.tsx           # Root layout
-│   └── globals.css          # Global styles
-├── components/              # React components
-│   ├── ui/                  # shadcn/ui components
-│   └── auth/                # Authentication components
-├── hooks/                   # Custom React hooks
-│   └── auth/                # Authentication hooks
-├── lib/                     # Utility libraries
-│   ├── auth/                # Auth utilities
-│   ├── validations/         # Zod schemas
-│   ├── axios.ts             # HTTP client
-│   ├── config.ts            # App configuration
-│   └── providers.tsx        # Context providers
-├── types/                   # TypeScript types
-│   ├── auth.ts              # Auth types
-│   └── next-auth.d.ts       # NextAuth type extensions
-└── middleware.ts            # Route protection
-```
-
-## Features Implemented (Week 1)
-
-### ✅ Authentication System
-
-- **Login**: Email/password authentication with JWT
-- **Registration**: User signup with business creation
-- **OAuth**: Google authentication (Microsoft ready)
-- **Password Reset**: Forgot password flow
-- **Session Management**: Automatic token refresh
-- **Route Protection**: Middleware-based auth guards
-- **RBAC**: Role-based access control (Owner, Admin, Manager, Viewer)
-
-### 🔒 Security Features
-
-- **Password Requirements**: 8+ chars, uppercase, lowercase, number, special char
-- **JWT Tokens**: 15-minute access token, 7-day refresh token
-- **Auto-refresh**: Tokens refreshed 2 minutes before expiry
-- **HTTPS Only**: Enforced in production
-- **CSRF Protection**: Built into NextAuth.js
-- **XSS Prevention**: React's built-in escaping
-- **Input Validation**: Zod schemas with comprehensive rules
-- **Error Handling**: User-friendly error messages
-
-## API Integration
-
-The frontend communicates with the .NET 10 backend API:
-
-### Authentication Endpoints
-
-- `POST /api/v1/auth/login` - Email/password login
-- `POST /api/v1/auth/register` - User registration
-- `POST /api/v1/auth/refresh-token` - Refresh JWT token
-- `POST /api/v1/auth/logout` - User logout
-- `POST /api/v1/auth/forgot-password` - Request password reset
-- `POST /api/v1/auth/reset-password` - Reset password with token
-- `POST /api/v1/auth/google` - Google OAuth login
-
-### Axios Configuration
-
-- **Base URL**: Configured via environment variables
-- **Timeout**: 30 seconds
-- **Interceptors**: Auto-inject auth tokens, handle 401 errors
-- **Error Handling**: Centralized error messages
-
-## Code Quality
-
-- **TypeScript**: Strict mode enabled
-- **ESLint**: Next.js recommended config
-- **Type Safety**: Full type coverage
-- **Error Boundaries**: Graceful error handling
-- **Loading States**: Skeleton loaders and spinners
-
-## Next Steps (Week 1 Remaining)
-
-- [ ] Create onboarding wizard (4 steps)
-- [ ] Implement business profile form
-- [ ] Add channel setup interface
-- [ ] Build AI configuration UI
-- [ ] Add completion screen
-
-## Available Scripts
-
-```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm start            # Start production server
-npm run lint         # Run ESLint
-```
-
-## Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-
-## License
+## 📄 License
 
 Proprietary - All rights reserved
+
+---
+
+## 🤝 Contributing
+
+This is a private repository. For contribution guidelines, please contact the project maintainers.

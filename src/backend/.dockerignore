@@ -1,0 +1,54 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Ll]og/
+
+# IDE
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# NuGet
+*.nupkg
+**/packages/*
+*.nuget.props
+*.nuget.targets
+
+# Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+TestResults/
+
+# Coverage
+*.coverage
+*.coveragexml
+coverage*.json
+coverage*.xml
+
+# User secrets
+secrets.json
+
+# Docker
+Dockerfile*
+docker-compose*
+.docker/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+docs/
+
+# Misc
+*.log
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db

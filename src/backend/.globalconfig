@@ -1,0 +1,29 @@
+is_global = true
+
+# Global analyzer configuration for C# projects
+
+# Disable documentation warnings for test projects
+# Note: Commented out until test projects are created (S1-BE-009)
+# [**/Tests/**/*.cs]
+# dotnet_diagnostic.CS1591.severity = none
+# dotnet_diagnostic.SA1600.severity = none
+# dotnet_diagnostic.SA1633.severity = none
+
+# Code Quality Rules
+dotnet_diagnostic.CA1062.severity = suggestion
+dotnet_diagnostic.CA1303.severity = none
+dotnet_diagnostic.CA1716.severity = suggestion
+dotnet_diagnostic.CA1724.severity = suggestion
+dotnet_diagnostic.CA2007.severity = none
+
+# Suppress specific StyleCop rules
+dotnet_diagnostic.SA1101.severity = none  # Prefix local calls with this
+dotnet_diagnostic.SA1309.severity = none  # Field names should not begin with underscore
+dotnet_diagnostic.SA1413.severity = none  # Use trailing comma in multi-line initializers
+dotnet_diagnostic.SA1633.severity = none  # File should have header
+dotnet_diagnostic.SA1636.severity = none  # File header copyright text should match
+dotnet_diagnostic.SA1518.severity = none  # File is required to end with a single newline character
+
+# IDE suggestions
+dotnet_diagnostic.IDE0005.severity = warning  # Remove unnecessary usings
+dotnet_diagnostic.IDE0055.severity = warning  # Fix formatting

@@ -1,0 +1,52 @@
+QualiFlow Frontend - Setup & Run Commands
+============================================
+
+INSTALLATION
+============
+cd QualiFlow-Frontend
+npm install
+
+
+DEVELOPMENT (Local Testing)
+===========================
+npm run dev
+
+Then open in browser: http://localhost:3000
+
+
+PRODUCTION (For Server)
+=======================
+npm run build
+npm run start
+
+
+OTHER COMMANDS
+==============
+npm test          - Run tests
+npm run lint      - Run linting
+npm audit         - Check vulnerabilities
+
+
+FOLDER LOCATION
+===============
+/Users/sami/Downloads/QualiFlow-Frontend/
+
+
+REQUIREMENTS
+============
+- Node.js v20+
+- npm
+
+
+ENVIRONMENT VARIABLES
+=====================
+Create .env.local file:
+NEXT_PUBLIC_API_URL=http://localhost:5000
+
+
+QUICK START
+===========
+1. cd QualiFlow-Frontend
+2. npm install
+3. npm run dev
+4. Open http://localhost:3000

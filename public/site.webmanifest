@@ -1,0 +1,23 @@
+{
+  "name": "QualiFlow AI - Omnichannel Lead Qualification Platform",
+  "short_name": "QualiFlow AI",
+  "description": "AI-powered omnichannel lead qualification SaaS platform",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml"
+    }
+  ],
+  "theme_color": "#FF6900",
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "start_url": "/",
+  "orientation": "portrait-primary"
+}

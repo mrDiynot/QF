@@ -1,0 +1,421 @@
+'use client';
+
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  MessageSquare,
+  Phone,
+  Mail,
+  Instagram,
+  Facebook,
+  QrCode,
+  Plus,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Zap,
+  Brain,
+  TrendingUp,
+  TrendingDown,
+  AlertTriangle,
+  Sparkles,
+  Activity,
+  Target,
+  BarChart3,
+  Settings,
+  RefreshCw
+} from 'lucide-react';
+import { channelsService } from '@/services/api/channels.service';
+import { channelInsightsService } from '@/services/api/channel-insights.service';
+import { ImprovedChannelSetupWizard } from '@/components/channels/ImprovedChannelSetupWizard';
+import { ChannelCard } from '@/components/channels/ChannelCard';
+import { PendingChannelCard } from '@/components/channels/PendingChannelCard';
+import type { Channel } from '@/types/api';
+import { formatDistanceToNow } from 'date-fns';
+
+// Channel icons and metadata
+const CHANNEL_CONFIG: Record<string, { icon: React.ElementType; color: string; label: string }> = {
+  SMS: { icon: MessageSquare, color: 'text-blue-600', label: 'SMS Messaging' },
+  Voice: { icon: Phone, color: 'text-green-600', label: 'Voice Calls' },
+  WhatsApp: { icon: MessageSquare, color: 'text-emerald-600', label: 'WhatsApp' },
+  Instagram: { icon: Instagram, color: 'text-pink-600', label: 'Instagram' },
+  Facebook: { icon: Facebook, color: 'text-blue-700', label: 'Facebook' },
+  ChatWidget: { icon: MessageSquare, color: 'text-purple-600', label: 'Chat Widget' },
+  WebForm: { icon: Mail, color: 'text-orange-600', label: 'Web Forms' },
+  QRCode: { icon: QrCode, color: 'text-gray-600', label: 'QR Code' },
+};
+
+export default function ChannelsPage() {
+  const [setupDialogOpen, setSetupDialogOpen] = useState(false);
+  const [selectedChannelType, setSelectedChannelType] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('overview');
+
+  // Fetch all channels
+  const { data: channels = [], refetch, isLoading } = useQuery({
+    queryKey: ['channels'],
+    queryFn: channelsService.getChannels,
+  });
+
+  // Fetch pending channels from onboarding
+  const { data: pendingChannels = [] } = useQuery({
+    queryKey: ['channels', 'pending'],
+    queryFn: channelsService.getPendingChannels,
+  });
+
+  // Fetch AI-powered channel health insights
+  const { data: channelHealth } = useQuery({
+    queryKey: ['channels', 'health'],
+    queryFn: channelInsightsService.getChannelHealth,
+    enabled: channels.length > 0,
+  });
+
+  // Fetch AI recommendations for new channels
+  const { data: recommendations } = useQuery({
+    queryKey: ['channels', 'recommendations'],
+    queryFn: channelInsightsService.getChannelRecommendations,
+  });
+
+  const activeChannels = channels.filter((c: Channel) => c.isActive);
+  const inactiveChannels = channels.filter((c: Channel) => !c.isActive);
+  const verifiedChannels = channels.filter((c: Channel) => c.verificationStatus === 'Verified');
+  const needsAttention = channels.filter((c: Channel) => 
+    c.verificationStatus === 'Pending' || c.verificationStatus === 'Failed'
+  );
+
+  const handleSetupChannel = (channelType: string) => {
+    setSelectedChannelType(channelType);
+    setSetupDialogOpen(true);
+  };
+
+  const handleSetupComplete = () => {
+    setSetupDialogOpen(false);
+    setSelectedChannelType(null);
+    refetch();
+  };
+
+  const getHealthColor = (score: number) => {
+    if (score >= 80) return 'text-green-600';
+    if (score >= 60) return 'text-yellow-600';
+    return 'text-red-600';
+  };
+
+  const getHealthBgColor = (score: number) => {
+    if (score >= 80) return 'bg-green-50 border-green-200';
+    if (score >= 60) return 'bg-yellow-50 border-yellow-200';
+    return 'bg-red-50 border-red-200';
+  };
+
+  return (
+    <div className="animate-fade-in pt-4">
+      {/* Header with AI Insights */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
+                <Activity className="size-7 text-white" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold text-text-navy">Channels</h1>
+                <p className="text-sm text-text-secondary mt-1 flex items-center gap-2">
+                  <Brain className="size-4 text-purple-600" />
+                  AI-powered omnichannel communication management
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button 
+              variant="outline"
+              onClick={() => refetch()}
+              className="gap-2"
+            >
+              <RefreshCw className="size-4" />
+              Refresh
+            </Button>
+            <Button 
+              onClick={() => setSetupDialogOpen(true)}
+              className="gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:opacity-90 shadow-lg"
+            >
+              <Plus className="size-4" />
+              Add Channel
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* AI-Powered Health Overview */}
+      {channelHealth && (
+        <Card className="mb-8 border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-blue-50">
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-purple-600 rounded-lg">
+                    <Brain className="size-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-text-navy">AI Channel Health Score</h3>
+                    <p className="text-sm text-text-secondary">Real-time performance analysis</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-4 gap-6">
+                  <div>
+                    <div className={`text-3xl font-bold ${getHealthColor(channelHealth.overallScore)}`}>
+                      {channelHealth.overallScore}
+                    </div>
+                    <p className="text-xs text-text-secondary mt-1">Overall Health</p>
+                    <Progress value={channelHealth.overallScore} className="mt-2 h-2" />
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-green-600">{channelHealth.activeChannels}</div>
+                    <p className="text-xs text-text-secondary mt-1">Active Channels</p>
+                    <div className="flex items-center gap-1 mt-2">
+                      <CheckCircle2 className="size-3 text-green-600" />
+                      <span className="text-xs text-green-600">Operational</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-orange-600">{channelHealth.channelsNeedingAttention}</div>
+                    <p className="text-xs text-text-secondary mt-1">Need Attention</p>
+                    {channelHealth.channelsNeedingAttention > 0 && (
+                      <div className="flex items-center gap-1 mt-2">
+                        <AlertTriangle className="size-3 text-orange-600" />
+                        <span className="text-xs text-orange-600">Action Required</span>
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-blue-600">{verifiedChannels.length}</div>
+                    <p className="text-xs text-text-secondary mt-1">Verified</p>
+                    <div className="flex items-center gap-1 mt-2">
+                      <Sparkles className="size-3 text-blue-600" />
+                      <span className="text-xs text-blue-600">Trusted</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* AI Recommendations */}
+      {recommendations && recommendations.recommendedChannels.length > 0 && (
+        <Card className="mb-8 border-l-4 border-l-purple-600">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Sparkles className="size-5 text-purple-600" />
+                <CardTitle>AI Recommendations</CardTitle>
+              </div>
+              <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                Powered by AI
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-3">
+              {recommendations.recommendedChannels.map((rec, index) => {
+                const config = CHANNEL_CONFIG[rec.type] || CHANNEL_CONFIG.SMS;
+                const Icon = config.icon;
+                return (
+                  <div key={index} className="p-4 border rounded-lg hover:border-purple-300 hover:shadow-md transition-all cursor-pointer">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="p-2 bg-purple-100 rounded-lg">
+                        <Icon className={`size-5 ${config.color}`} />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-text-navy">{rec.name}</h4>
+                        <Badge className="mt-1 text-xs">Priority #{rec.priority}</Badge>
+                      </div>
+                    </div>
+                    <p className="text-sm text-text-secondary mb-2">{rec.reason}</p>
+                    <div className="flex items-center gap-2 text-xs text-green-600 font-medium">
+                      <TrendingUp className="size-3" />
+                      {rec.expectedImpact}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Enhanced Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="overview" className="gap-2">
+            <BarChart3 className="size-4" />
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="active" className="gap-2">
+            <CheckCircle2 className="size-4" />
+            Active ({activeChannels.length})
+          </TabsTrigger>
+          <TabsTrigger value="pending" className="gap-2">
+            <Clock className="size-4" />
+            Setup ({pendingChannels.filter(p => !p.isActivated).length})
+          </TabsTrigger>
+          <TabsTrigger value="all" className="gap-2">
+            <Target className="size-4" />
+            All ({channels.length})
+          </TabsTrigger>
+        </TabsList>
+
+        {/* Overview Tab with AI Insights */}
+        <TabsContent value="overview" className="space-y-6">
+          {isLoading ? (
+            <Card className="p-12 text-center">
+              <RefreshCw className="size-12 mx-auto mb-4 text-purple-600 animate-spin" />
+              <p className="text-text-secondary">Loading channel insights...</p>
+            </Card>
+          ) : channels.length === 0 ? (
+            <Card className="p-12 text-center">
+              <Activity className="size-16 mx-auto mb-4 text-gray-300" />
+              <h3 className="text-xl font-semibold text-text-navy mb-2">No Channels Yet</h3>
+              <p className="text-text-secondary mb-6">Start capturing leads by adding your first communication channel</p>
+              <Button onClick={() => setSetupDialogOpen(true)} className="gap-2">
+                <Plus className="size-4" />
+                Add Your First Channel
+              </Button>
+            </Card>
+          ) : (
+            <>
+              {/* Channel Performance Grid */}
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {channelHealth?.insights.map((insight) => {
+                  const channel = channels.find(c => c.id === insight.channelId);
+                  if (!channel) return null;
+                  
+                  const config = CHANNEL_CONFIG[channel.type] || CHANNEL_CONFIG.SMS;
+                  const Icon = config.icon;
+                  
+                  return (
+                    <Card key={insight.channelId} className={`border-2 ${getHealthBgColor(insight.healthScore)}`}>
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="p-2 bg-white rounded-lg shadow-sm">
+                              <Icon className={`size-4 ${config.color}`} />
+                            </div>
+                            <div>
+                              <h4 className="font-semibold text-sm">{channel.name}</h4>
+                              <p className="text-xs text-text-secondary">{config.label}</p>
+                            </div>
+                          </div>
+                          <div className={`text-2xl font-bold ${getHealthColor(insight.healthScore)}`}>
+                            {insight.healthScore}
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <div className="grid grid-cols-2 gap-3 text-xs">
+                          <div>
+                            <p className="text-text-secondary">Messages</p>
+                            <p className="font-semibold">{insight.metrics.totalMessages}</p>
+                          </div>
+                          <div>
+                            <p className="text-text-secondary">Response Rate</p>
+                            <p className="font-semibold">{(insight.metrics.responseRate * 100).toFixed(0)}%</p>
+                          </div>
+                          <div>
+                            <p className="text-text-secondary">Avg Response</p>
+                            <p className="font-semibold">{insight.metrics.avgResponseTime}s</p>
+                          </div>
+                          <div>
+                            <p className="text-text-secondary">Conversion</p>
+                            <p className="font-semibold">{(insight.metrics.conversionRate * 100).toFixed(0)}%</p>
+                          </div>
+                        </div>
+                        
+                        {insight.recommendations.length > 0 && (
+                          <div className="pt-3 border-t">
+                            <div className="flex items-center gap-1 text-xs font-medium text-orange-600 mb-2">
+                              <AlertTriangle className="size-3" />
+                              {insight.recommendations.length} Recommendation{insight.recommendations.length > 1 ? 's' : ''}
+                            </div>
+                            <p className="text-xs text-text-secondary line-clamp-2">
+                              {insight.recommendations[0].description}
+                            </p>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </TabsContent>
+
+        {/* Active Channels Tab */}
+        <TabsContent value="active" className="space-y-4">
+          {activeChannels.length === 0 ? (
+            <Card className="p-12 text-center">
+              <p className="text-text-secondary">No active channels yet. Set up your first channel to start capturing leads!</p>
+            </Card>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {activeChannels.map((channel: Channel) => (
+                <ChannelCard key={channel.id} channel={channel} onRefetch={refetch} />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+
+        {/* Pending Setup Tab */}
+        <TabsContent value="pending" className="space-y-4">
+          {pendingChannels.filter(p => !p.isActivated).length === 0 ? (
+            <Card className="p-12 text-center">
+              <p className="text-text-secondary">All channels from onboarding have been configured!</p>
+            </Card>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {pendingChannels.filter(p => !p.isActivated).map((pending) => (
+                <PendingChannelCard
+                  key={pending.channelType}
+                  pending={pending}
+                  onSetup={() => handleSetupChannel(pending.channelType)}
+                />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+
+        {/* All Channels Tab */}
+        <TabsContent value="all" className="space-y-4">
+          {channels.length === 0 ? (
+            <Card className="p-12 text-center">
+              <p className="text-text-secondary mb-4">No channels configured yet.</p>
+              <Button onClick={() => setSetupDialogOpen(true)}>
+                <Plus className="size-4 mr-2" />
+                Add Your First Channel
+              </Button>
+            </Card>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {channels.map((channel: Channel) => (
+                <ChannelCard key={channel.id} channel={channel} onRefetch={refetch} />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+
+      {/* Improved Setup Wizard */}
+      <ImprovedChannelSetupWizard
+        open={setupDialogOpen}
+        onOpenChange={setSetupDialogOpen}
+        onComplete={handleSetupComplete}
+      />
+    </div>
+  );
+}
+
